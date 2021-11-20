@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
 const Home = (props) => {
   const classes = useStyles();
   const { user, logout, fetchConversations } = props;
+  console.log(fetchConversations);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
