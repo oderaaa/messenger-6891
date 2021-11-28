@@ -36,7 +36,7 @@ const Chat = (props) => {
   };
 
   const showUnreadMessages = () => {
-    const unreadMessageCount = conversation.messages.filter(message => !message.read && message.senderId !== userId).length
+    const unreadMessageCount = conversation.messages.filter(message => !message.read && message.senderId !== userId).length;
     return (unreadMessageCount === 0)?"":<Avatar className={classes.unreadMessageCount}>{unreadMessageCount}</Avatar>;
   }
 
