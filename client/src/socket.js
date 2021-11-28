@@ -26,7 +26,7 @@ socket.on("connect", () => {
     for(let i=0; i < state.conversations.length; i++){
       if (state.conversations[i].id === data.message.conversationId && 
         state.conversations[i].otherUser.username === state.activeConversation){
-        store.dispatch(openConversation(state.conversations[i]));
+        store.dispatch(openConversation(state.conversations[i].id));
       }
     }
   });

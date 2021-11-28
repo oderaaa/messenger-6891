@@ -32,7 +32,7 @@ const Chat = (props) => {
   
   const handleClick = async (conversation) => {
     await props.setActiveChat(conversation.otherUser.username);
-    props.openConversation(conversation);
+    props.openConversation(conversation.id);
   };
 
   const showUnreadMessages = () => {
