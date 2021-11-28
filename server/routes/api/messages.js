@@ -43,7 +43,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-/*router.put("/", async (req, res, next) => {
+router.put("/", async (req, res, next) => {
   try {
     if (!req.user) {
       return res.sendStatus(401);
@@ -54,6 +54,6 @@ router.post("/", async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-});*/
+});
 
 module.exports = router;
