@@ -1,4 +1,3 @@
-
 export const addMessageToStore = (state, payload) => {
 
   const { message, sender } = payload;
@@ -25,20 +24,60 @@ export const addMessageToStore = (state, payload) => {
   });
 };
 
-export const markMessagesAsRead = (state, conversationId) => {
+export const markMessagesAsRead = (state, payload) => {
+  const { conversationId, senderId } = payload;
   return state.map((convo) => {
     if(convo.id === conversationId){
       const convoCopy = {...convo};
-      convoCopy.messages.forEach(message => {
-        if(!message.read){
+      convoCopy.messages.forEach((message, i) => {
+        if(convoCopy.messages[i].senderId === senderId && !message.read){
           message.read = true;
-        }
+        }        
       });
       return convoCopy;    
     }else{
       return convo;
     }
   });
+}
+
+export const trackReadMessages = (state, conversationId) => {
+  if(conversationId === null){
+    return state.map((convo) => {
+      const unreadMessageCount = convo.messages.filter(message => !message.read && message.senderId === convo.otherUser.id).length;
+      const userMessages = convo.messages.filter(message => message.read && message.senderId !== convo.otherUser.id);
+      const convoCopy = {...convo, unreadMessageCount: unreadMessageCount, otherUserLastReadMessage: userMessages[userMessages.length - 1]};
+      return convoCopy;
+    });
+  }else{
+    return state.map((convo) => {
+      if(convo.id === conversationId){
+        const unreadMessageCount = convo.messages.filter(message => !message.read && message.senderId === convo.otherUser.id).length; 
+        const userMessages = convo.messages.filter(message => message.read && message.senderId !== convo.otherUser.id);
+        const convoCopy = {...convo, unreadMessageCount: unreadMessageCount, otherUserLastReadMessage: userMessages[userMessages.length - 1]};
+        return convoCopy;
+      }else{
+        return convo;
+      }
+    });
+  }
+}
+
+export const setLastReadMessage = (state, message) => {
+  return state.map((convo) => {
+    if(convo.id === message.conversationId){
+      const convoCopy = {...convo};
+      convoCopy.messages.forEach((element, i) => {
+        if(convoCopy.messages[i].senderId === element.senderId && !element.read){
+          element.read = true;
+        }        
+      });
+      convoCopy.otherUserLastReadMessage = message;
+      return convoCopy;
+    }else{
+      return convo;
+    }
+  }); 
 }
 
 export const addOnlineUserToStore = (state, id) => {

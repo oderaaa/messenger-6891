@@ -4,7 +4,9 @@ import {
   addSearchedUsersToStore,
   removeOfflineUserFromStore,
   addMessageToStore,
-  markMessagesAsRead
+  markMessagesAsRead,
+  trackReadMessages,
+  setLastReadMessage
 } from "./utils/reducerFunctions";
 
 // ACTIONS
@@ -17,6 +19,8 @@ const SET_SEARCHED_USERS = "SET_SEARCHED_USERS";
 const CLEAR_SEARCHED_USERS = "CLEAR_SEARCHED_USERS";
 const ADD_CONVERSATION = "ADD_CONVERSATION";
 const READ_MESSAGES = "READ_MESSAGES";
+const TRACK_CONVERSATION = "TRACK_CONVERSATION";
+const SET_OTHER_USER_LAST_READ_MESSAGE = "SET_OTHER_USER_LAST_READ_MESSAGE";
 
 // ACTION CREATORS
 
@@ -69,15 +73,27 @@ export const addConversation = (recipientId, newMessage) => {
   };
 };
 
-export const readMessages = (conversationId) => {
+export const readMessages = (conversation) => {
   return {
     type: READ_MESSAGES,
-    conversationId
+    payload : { conversationId: conversation.id, senderId: conversation.otherUser.id }
+  }
+}
+
+export const trackConversation = (conversationId = null) => {
+  return {
+    type: TRACK_CONVERSATION,
+    conversationId 
+  }
+}
+
+export const setOtherUserLastReadMessage = (message) => {
+  return {
+    type: SET_OTHER_USER_LAST_READ_MESSAGE, 
+    message
   }
 }
 // REDUCER
-
-
 
 const reducer = (state = [], action) => {
   switch (action.type) {
@@ -102,7 +118,11 @@ const reducer = (state = [], action) => {
         action.payload.newMessage
       );
     case READ_MESSAGES:
-      return markMessagesAsRead(state, action.conversationId);
+      return markMessagesAsRead(state, action.payload);
+    case TRACK_CONVERSATION:
+      return trackReadMessages(state, action.conversationId);
+    case SET_OTHER_USER_LAST_READ_MESSAGE:
+      return setLastReadMessage(state, action.message);
     default:
       return state;
   }

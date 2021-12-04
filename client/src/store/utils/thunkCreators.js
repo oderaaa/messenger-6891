@@ -6,6 +6,7 @@ import {
   setNewMessage,
   setSearchedUsers,
   readMessages,
+  trackConversation
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -74,6 +75,7 @@ export const fetchConversations = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/conversations");
     dispatch(gotConversations(data));
+    dispatch(trackConversation());
   } catch (error) {
     console.error(error);
   }
@@ -102,7 +104,7 @@ export const postMessage =  (body) => async (dispatch) => {
       } else {
         dispatch(setNewMessage(data.message));
       }
-      sendMessage(data, body);
+      sendMessage(data, body);   
   } catch (error) {
     console.error(error);
   }
@@ -117,14 +119,24 @@ export const searchUsers = (searchTerm) => async (dispatch) => {
   }
 };
 
-export const openConversation = (conversationId) => async (dispatch) => {
+export const openConversation = (conversation) => async (dispatch) => {
   try{
     const body = {
-      conversationId: conversationId
+      conversationId: conversation.id,
+      senderId: conversation.otherUser.id,
     }
-    const { data } = await axios.put(`/api/messages`, body);
-    dispatch(readMessages(conversationId));
+    axios.put(`/api/messages`, body);
+    dispatch(readMessages(conversation));
+    dispatch(trackConversation(conversation.id));
+    const messages = conversation.messages.filter(message => message.senderId === conversation.otherUser.id);
+    receiveMessage(messages[messages.length -1]);
   }catch(error){
     console.error(error);
   }
 }
+
+const receiveMessage = (message) => {
+  socket.emit("read-message", 
+    message
+  );
+};
