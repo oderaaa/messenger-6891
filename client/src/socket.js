@@ -23,7 +23,7 @@ socket.on("connect", () => {
   });
   
   socket.on("read-message", (data) => {
-    if(typeof data.message !== 'undefined'){
+    if(data.message){
       const state = store.getState();
       state.conversations.forEach((conversation, i) => {
         if(conversation.id === data.message.conversationId){

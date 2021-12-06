@@ -55,7 +55,7 @@ router.put("/", async (req, res, next) => {
     );
     if(conversation){
       if(req.user.id !== conversation.dataValues.user1Id && req.user.id !== conversation.dataValues.user2Id ){
-        return res.sendStatus(401);
+        return res.sendStatus(403);
       }
       Message.update({ read: true },{ where : { conversationId, senderId }});
       return res.sendStatus(204);
